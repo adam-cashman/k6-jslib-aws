@@ -163,7 +163,7 @@ export class S3Client extends AWSClient {
      * @throws  {S3ServiceError}
      * @throws  {InvalidSignatureError}
      */
-    async getObject(bucketName: string, objectKey: string): Promise<S3Object> {
+    async getObject(bucketName: string, objectKey: string, headers?: any): Promise<S3Object> {
         // Prepare request
         const method = 'GET'
 
@@ -172,7 +172,7 @@ export class S3Client extends AWSClient {
                 method: method,
                 endpoint: this.endpoint,
                 path: `/${bucketName}/${objectKey}`,
-                headers: {},
+                headers : headers || {},
             },
             {}
         )
@@ -289,13 +289,13 @@ export class S3Client extends AWSClient {
         const method = 'PUT'
 
         const bucketEndpoint = this.endpoint.copy()
-        bucketEndpoint.hostname = `${destinationBucket}.${this.endpoint.hostname}`
+        //bucketEndpoint.hostname = `${destinationBucket}.${this.endpoint.hostname}`
 
         const signedRequest = this.signature.sign(
             {
                 method: method,
                 endpoint: bucketEndpoint,
-                path: `/${destinationKey}`,
+                path: `/${destinationBucket}/${destinationKey}`,
                 headers: {
                     'x-amz-copy-source': `${sourceBucket}/${sourceKey}`,
                 },
@@ -324,13 +324,13 @@ export class S3Client extends AWSClient {
         const method = 'POST'
 
         const bucketEndpoint = this.endpoint.copy()
-        bucketEndpoint.hostname = `${bucketName}.${this.endpoint.hostname}`
+        //bucketEndpoint.hostname = `${bucketName}.${this.endpoint.hostname}`
 
         const signedRequest = this.signature.sign(
             {
                 method: method,
                 endpoint: bucketEndpoint,
-                path: `/${objectKey}`,
+                path: `/${bucketName}/${objectKey}`,
                 headers: {},
                 query: { uploads: '' },
             },
@@ -370,13 +370,13 @@ export class S3Client extends AWSClient {
         const method = 'PUT'
 
         const bucketEndpoint = this.endpoint.copy()
-        bucketEndpoint.hostname = `${bucketName}.${this.endpoint.hostname}`
+        //bucketEndpoint.hostname = `${bucketName}.${this.endpoint.hostname}`
 
         const signedRequest = this.signature.sign(
             {
                 method: method,
                 endpoint: bucketEndpoint,
-                path: `/${objectKey}`,
+                path: `/${bucketName}/${objectKey}`,
                 headers: {},
                 body: data,
                 query: {
@@ -421,14 +421,14 @@ export class S3Client extends AWSClient {
             .join('')}</CompleteMultipartUpload>`
 
         const bucketEndpoint = this.endpoint.copy()
-        bucketEndpoint.hostname = `${bucketName}.${this.endpoint.hostname}`
+        //bucketEndpoint.hostname = `${bucketName}.${this.endpoint.hostname}`
 
         const signedRequest = this.signature.sign(
             {
                 method: method,
                 endpoint: bucketEndpoint,
-                path: `/${objectKey}`,
-                headers: {},
+                path: `/${bucketName}/${objectKey}`,
+                headers: { 'Content-Type': 'application/xml'},
                 body: body,
                 query: {
                     uploadId: `${uploadId}`,
@@ -437,9 +437,14 @@ export class S3Client extends AWSClient {
             {}
         )
 
+        console.log(body);
+        console.log(signedRequest.endpoint);
+
         const res = await http.asyncRequest(method, signedRequest.url, signedRequest.body || null, {
             headers: signedRequest.headers,
         })
+
+        console.log(res.body);
 
         this._handle_error('CompleteMultipartUpload', res)
     }
@@ -457,13 +462,13 @@ export class S3Client extends AWSClient {
         const method = 'DELETE'
 
         const bucketEndpoint = this.endpoint.copy()
-        bucketEndpoint.hostname = `${bucketName}.${this.endpoint.hostname}`
+        //bucketEndpoint.hostname = `${bucketName}.${this.endpoint.hostname}`
 
         const signedRequest = this.signature.sign(
             {
                 method: method,
                 endpoint: bucketEndpoint,
-                path: `/${objectKey}`,
+                path: `/${bucketName}/${objectKey}`,
                 headers: {},
                 query: {
                     uploadId: `${uploadId}`,
