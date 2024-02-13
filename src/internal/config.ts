@@ -90,11 +90,11 @@ export class AWSConfig {
             )
         }
 
-        if (options.accessKeyId.length < 16 || options.accessKeyId.length > 128) {
-            throw new InvalidAWSConfigError(
-                `invalid AWS access key ID; reason: size should be between 16 and 128 characters, got ${options.accessKeyId.length}`
-            )
-        }
+        // if (options.accessKeyId.length < 16 || options.accessKeyId.length > 128) {
+        //     throw new InvalidAWSConfigError(
+        //         `invalid AWS access key ID; reason: size should be between 16 and 128 characters, got ${options.accessKeyId.length}`
+        //     )
+        // }
 
         if (!options.secretAccessKey || options.secretAccessKey === '') {
             throw new InvalidAWSConfigError(
@@ -102,11 +102,11 @@ export class AWSConfig {
             )
         }
 
-        if (options.secretAccessKey.length < 16 || options.secretAccessKey.length > 128) {
-            throw new InvalidAWSConfigError(
-                `invalid AWS secret access key; reason: size should be between 16 and 128 characters, got ${options.secretAccessKey.length}`
-            )
-        }
+        // if (options.secretAccessKey.length < 16 || options.secretAccessKey.length > 128) {
+        //     throw new InvalidAWSConfigError(
+        //         `invalid AWS secret access key; reason: size should be between 16 and 128 characters, got ${options.secretAccessKey.length}`
+        //     )
+        // }
 
         this.region = options.region
         this.accessKeyId = options.accessKeyId
